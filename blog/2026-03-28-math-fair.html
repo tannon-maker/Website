@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volunteering at a math fair &ndash; Tannon Warnick</title>
+<link rel="stylesheet" href="../css/style.css">
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">Tannon Warnick</a>
+    <p class="site-tagline">Mathematics &middot; University of Utah</p>
+    <nav class="site">
+      <a href="../index.html">Home</a>
+      <a href="../research.html">Research</a>
+      <a href="../blog.html" aria-current="page">Blog</a>
+      <a href="../cv.html">CV</a>
+      <a href="../torsion-calculator.html">Calculator</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="post">
+    <h1>Volunteering at a math fair</h1>
+    <div class="post-meta">March 28, 2026</div>
+
+    <p>
+      Spent the day volunteering at a math fair here in Salt Lake City, talking to high schoolers
+      and younger kids about higher math. It's a good exercise in a different kind of communication than a thesis. I always love an opportunity to teach others about what I am so passionate about.
+    </p>
+
+    <figure class="post-figure">
+      <img src="../assets/blog/2026-03-28-math-fair-group.jpg" alt="Volunteers at the Salt Lake City math fair, March 2026">
+      <figcaption>Everyone who ran booths at the fair.</figcaption>
+    </figure>
+
+    <div class="todo">
+      <strong>Owner note:</strong> drop the group photo in at
+      <code>assets/blog/2026-03-28-math-fair-group.jpg</code> (create the
+      <code>assets/blog/</code> folder if it doesn't exist yet) and this will show up above.
+    </div>
+
+    <p>
+      My booth was a live version of Buffon's needle, done with toothpicks instead of needles.
+      I taped down a set of parallel lines spaced a fixed distance $d$ apart and cut toothpicks
+      to exactly half that length, $d/2$. Buffon's classical result says that if you drop a
+      needle of length $\ell$ onto lines spaced $d$ apart (with $\ell \le d$), the probability it
+      crosses a line is
+      $$P = \frac{2\ell}{\pi d}.$$
+      Plug in $\ell = d/2$ and the $2$'s cancel: $P = 1/\pi$. So every toothpick drop is a tiny,
+      physical coin flip that's secretly weighted by $\pi$.
+    </p>
+
+    <p>
+      We kept a running tally taped next to the board (total drops, and drops that crossed
+      a line) and let kids take turns adding to it. Divide total drops by crossings and
+      you get an estimate of $\pi$ that gets better the longer the fair runs. Watching a nine-year-old
+      realize that flicking toothpicks onto a table is somehow "finding pi" was probably the best
+      part of my day. A few of the older kids wanted to know why the probability worked out to
+      $1/\pi$ at all, which turned into a nice quick sketch of where the $\sin\theta$ in the
+      needle-crossing condition comes from geometrically, without ever writing down an integral.
+    </p>
+
+    <p>
+      By the end of the day our tally had climbed into the thousands of drops, and the running
+      estimate had settled in close to $3.45$, which is a little high and I had to explain that even if we did 1,000,000 needle drops we cannot say for certain where the final total would end up (we have a good idea) but if we had infinite time we can say for certain it will approach $\pi$.
+    </p>
+  </article>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    &copy; 2026 Tannon Warnick.
+  </div>
+</footer>
+
+</body>
+</html>

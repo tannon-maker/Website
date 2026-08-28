@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torsion Point Calculator &ndash; Tannon Warnick</title>
+<meta name="description" content="Interactive calculator: detect Gaussian or Eisenstein complex multiplication on an elliptic curve, build the division/kernel polynomial for pi = n + m*s, and solve for the torsion point coordinates.">
+<link rel="stylesheet" href="css/style.css">
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+<style>
+  .calc-form {
+    font-family: var(--sans);
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem 1.4rem;
+    margin: 1.2rem 0 1.6rem;
+  }
+  .calc-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-bottom: 0.9rem; }
+  .calc-field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .calc-field label { font-size: 0.82rem; color: var(--ink-soft); }
+  .calc-field input {
+    font-family: var(--mono);
+    font-size: 1rem;
+    width: 6.5rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .calc-eq { font-family: var(--serif); font-size: 1.05rem; color: var(--ink-soft); margin-right: 0.2rem; }
+  button.calc-btn {
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    font-weight: 600;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+  }
+  button.calc-btn:hover { background: var(--accent-soft); }
+  button.calc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .cm-panel {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 6px;
+    margin-top: 0.6rem;
+  }
+  .cm-panel.gaussian { background: rgba(92, 61, 153, 0.1); border: 1px solid var(--link); }
+  .cm-panel.eisenstein { background: rgba(122, 46, 46, 0.1); border: 1px solid var(--accent); }
+  .cm-panel.none { background: var(--bg); border: 1px dashed var(--rule); color: var(--ink-soft); }
+  .calc-output { margin-top: 1rem; }
+  .calc-error {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--accent);
+    background: rgba(122, 46, 46, 0.08);
+    border: 1px solid var(--accent-soft);
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    margin-top: 0.8rem;
+  }
+  .points-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    margin-top: 0.8rem;
+  }
+  .points-table th, .points-table td {
+    text-align: left;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .points-table th { font-family: var(--sans); font-size: 0.78rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; }
+  .flag {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    padding: 0.05rem 0.55rem;
+    margin-left: 0.4rem;
+  }
+  .flag.gaussian { color: var(--link); border: 1px solid var(--link); }
+  .flag.eisenstein { color: var(--accent-soft); border: 1px solid var(--accent-soft); }
+  .poly-box {
+    overflow-x: auto;
+    padding: 0.6rem 0;
+  }
+  .field-note { font-family: var(--sans); font-size: 0.8rem; color: var(--ink-soft); margin-top: -0.3rem; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="site-title" href="index.html">Tannon Warnick</a>
+    <p class="site-tagline">Mathematics &middot; University of Utah</p>
+    <nav class="site">
+      <a href="index.html">Home</a>
+      <a href="research.html">Research</a>
+      <a href="blog.html">Blog</a>
+      <a href="cv.html">CV</a>
+      <a href="torsion-calculator.html" aria-current="page">Calculator</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Torsion Point Calculator</h1>
+  <p class="lede">
+    Enter an elliptic curve $y^2 = x^3 + Ax + B$. The tool detects whether it admits complex
+    multiplication by the Gaussian integers $\mathbb{Z}[i]$ or the Eisenstein integers
+    $\mathbb{Z}[\omega]$, builds the division/kernel polynomial for a map
+    $\pi = n + m\cdot s$, and numerically solves it for the torsion-point coordinates &mdash;
+    flagging the ones that land exactly on Gaussian or Eisenstein integers.
+  </p>
+  <p>
+    This runs entirely in your browser (no server involved) and is a port of the recursive
+    division-polynomial construction from
+    <a href="research.html">my honors thesis and paper</a>. Exact rational arithmetic builds
+    the polynomial; root-finding (Durand&ndash;Kerner) is numerical, so coordinates are shown to a
+    few decimal places with a flag when they're recognizably close to an exact Gaussian or
+    Eisenstein integer.
+  </p>
+
+  <div class="calc-form">
+    <div class="calc-row">
+      <span class="calc-eq">Curve:&nbsp; y&sup2; = x&sup3; +</span>
+      <div class="calc-field">
+        <label for="in-A">A</label>
+        <input type="number" id="in-A" value="1" step="1">
+      </div>
+      <span class="calc-eq">x +</span>
+      <div class="calc-field">
+        <label for="in-B">B</label>
+        <input type="number" id="in-B" value="0" step="1">
+      </div>
+    </div>
+
+    <div id="cm-panel" class="cm-panel none">Enter A and B to detect complex multiplication.</div>
+
+    <div class="calc-row" style="margin-top: 1rem;">
+      <span class="calc-eq" id="pi-label">&pi; =</span>
+      <div class="calc-field">
+        <label for="in-n">n</label>
+        <input type="number" id="in-n" value="2" step="1">
+      </div>
+      <span class="calc-eq" id="pi-symbol">+ m &middot; i</span>
+      <div class="calc-field">
+        <label for="in-m">m</label>
+        <input type="number" id="in-m" value="1" step="1">
+      </div>
+      <button class="calc-btn" id="compute-btn">Compute</button>
+    </div>
+    <p class="field-note">Keep |n| and |m| small (up to about 6&ndash;8) &mdash; division polynomial
+      degree grows quickly. Set m = 0 for a plain n-division polynomial &psi;<sub>n</sub>.</p>
+  </div>
+
+  <div id="calc-output" class="calc-output"></div>
+
+  <h2>How this works</h2>
+  <p>
+    For a curve with $B=0, A\neq0$ the map $[i]:(x,y)\mapsto(-x,iy)$ is an endomorphism, giving CM
+    by $\mathbb{Z}[i]$. For $A=0, B\neq0$ the map $[\omega]:(x,y)\mapsto(\zeta_3 x, y)$ gives CM by
+    $\mathbb{Z}[\omega]$. The tool builds the standard division polynomials $\psi_n,\varphi_n$ by
+    the usual recursion, then assembles the kernel polynomial of $\pi=n+ms$ from
+    $\varphi_n\psi_m^2 \pm s\cdot\varphi_m\psi_n^2$ (sign and the role of $s$ depending on
+    Gaussian vs. Eisenstein), following the same construction used in the thesis and paper.
+    Roots of that polynomial give the $x$-coordinates of the $\pi$-torsion points; $y$ then
+    follows from the curve equation.
+  </p>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    &copy; 2026 Tannon Warnick.
+  </div>
+</footer>
+
+<script src="js/torsion.js"></script>
+<script>
+(function () {
+  const T = window.Torsion;
+  const inA = document.getElementById("in-A");
+  const inB = document.getElementById("in-B");
+  const inN = document.getElementById("in-n");
+  const inM = document.getElementById("in-m");
+  const cmPanel = document.getElementById("cm-panel");
+  const piSymbol = document.getElementById("pi-symbol");
+  const output = document.getElementById("calc-output");
+  const btn = document.getElementById("compute-btn");
+
+  let currentCM = { type: "none" };
+
+  function parseIntField(el) {
+    const v = el.value.trim();
+    if (v === "" || v === "-") return null;
+    const n = Number(v);
+    if (!Number.isInteger(n)) return null;
+    return n;
+  }
+
+  function updateCM() {
+    const a = parseIntField(inA), b = parseIntField(inB);
+    if (a === null || b === null) {
+      cmPanel.className = "cm-panel none";
+      cmPanel.textContent = "Enter integer values for A and B.";
+      currentCM = { type: "none" };
+      return;
+    }
+    const cm = T.detectCM(T.frac(a), T.frac(b));
+    currentCM = cm;
+    if (cm.type === "gaussian") {
+      cmPanel.className = "cm-panel gaussian";
+      cmPanel.innerHTML = "&#10003; Detected CM by the Gaussian integers &Zopf;[i] &mdash; map [i]: (x,y) &#8614; (&minus;x, iy)";
+      piSymbol.innerHTML = "+ m &middot; i";
+    } else if (cm.type === "eisenstein") {
+      cmPanel.className = "cm-panel eisenstein";
+      cmPanel.innerHTML = "&#10003; Detected CM by the Eisenstein integers &Zopf;[&omega;] &mdash; map [&omega;]: (x,y) &#8614; (&zeta;<sub>3</sub>x, y)";
+      piSymbol.innerHTML = "+ m &middot; &omega;";
+    } else {
+      cmPanel.className = "cm-panel none";
+      cmPanel.innerHTML = "No simple CM detected for this A, B (need B=0,A&ne;0 for Gaussian, or A=0,B&ne;0 for Eisenstein). You can still set m=0 to compute a plain &psi;<sub>n</sub>.";
+      piSymbol.innerHTML = "+ m &middot; s";
+    }
+  }
+
+  function showError(msg) {
+    output.innerHTML = '<div class="calc-error">' + msg + "</div>";
+  }
+
+  function fmtCM(rec) {
+    if (!rec) return "";
+    if (rec.type === "gaussian") {
+      const sign = (v) => (v < 0 ? " - " + Math.abs(v) : " + " + v);
+      return '<span class="flag gaussian">' + rec.x.a + sign(rec.x.b) + "i, " + rec.y.a + sign(rec.y.b) + "i &mdash; Gaussian integer point</span>";
+    }
+    const sign = (v) => (v < 0 ? " - " + Math.abs(v) : " + " + v);
+    return '<span class="flag eisenstein">' + rec.x.a + sign(rec.x.b) + "&omega;, " + rec.y.a + sign(rec.y.b) + "&omega; &mdash; Eisenstein integer point</span>";
+  }
+
+  function compute() {
+    const a = parseIntField(inA), b = parseIntField(inB);
+    const n = parseIntField(inN), m = parseIntField(inM);
+    if (a === null || b === null) return showError("A and B must be integers.");
+    if (n === null || m === null) return showError("n and m must be integers.");
+    if (n === 0 && m === 0) return showError("&pi; = 0 is not a valid map. Set n or m nonzero.");
+    if (Math.abs(n) > 8 || Math.abs(m) > 8) return showError("Please keep |n| and |m| at or below 8 &mdash; larger maps produce very high-degree polynomials.");
+
+    const A = T.frac(a), B = T.frac(b);
+    const disc = 4 * a * a * a + 27 * b * b;
+    if (disc === 0) return showError("This curve is singular (4A&sup3; + 27B&sup2; = 0). Choose different A, B.");
+
+    let kernelResult, core;
+    try {
+      kernelResult = T.computeKernel(n, m, A, B, currentCM.type);
+      core = T.extractCorePoly(kernelResult);
+    } catch (e) {
+      return showError(e.message);
+    }
+    if (!core.ok) return showError(core.reason);
+
+    const s = currentCM.symbol || "s";
+    let polyLatex;
+    if (core.mode === "rational") {
+      polyLatex = T.polyToLatex(core.poly);
+    } else {
+      const aLatex = T.polyToLatex(core.a);
+      const bLatex = T.polyToLatex(core.b, "x");
+      polyLatex = "\\left(" + aLatex + "\\right) + \\omega\\left(" + bLatex + "\\right)";
+    }
+    const yFactorNote = core.hasYFactor
+      ? '<p class="field-note">This is the y-multiple part of &psi;<sub>k</sub> (the polynomial is odd in y); its roots are still the x-coordinates of the torsion points.</p>'
+      : "";
+
+    const pts = T.findTorsionPoints(core, A, B);
+
+    let rowsHtml = "";
+    pts.points.forEach((pt) => {
+      rowsHtml += "<tr><td>" + T.fmtComplex(pt.x) + "</td><td>" + T.fmtComplex(pt.y)
+        + (pt.recognized ? " " + fmtCM(pt.recognized) : "") + "</td></tr>";
+      const y2 = T.cx(-pt.y.re, -pt.y.im);
+      rowsHtml += "<tr><td>" + T.fmtComplex(pt.x) + "</td><td>" + T.fmtComplex(y2) + "</td></tr>";
+    });
+
+    const label = kernelResult.kind === "single"
+      ? "\\psi_{" + Math.abs(n || m) + "}(x)"
+      : "\\Psi_{" + n + (m >= 0 ? "+" : "") + m + s + "}(x)";
+
+    output.innerHTML =
+      '<h2 style="margin-top:1.6rem;">Kernel polynomial</h2>' +
+      '<div class="poly-box">$$' + label + " = " + polyLatex + "$$</div>" +
+      yFactorNote +
+      '<h2>Torsion point coordinates</h2>' +
+      '<p class="field-note">Numerically solved (degree ' + (pts.points.length) + '); each x-root pairs with &plusmn;y.</p>' +
+      '<table class="points-table"><thead><tr><th>x</th><th>y</th></tr></thead><tbody>' +
+      rowsHtml +
+      "</tbody></table>";
+
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([output]);
+    }
+  }
+
+  inA.addEventListener("input", updateCM);
+  inB.addEventListener("input", updateCM);
+  btn.addEventListener("click", compute);
+  updateCM();
+})();
+</script>
+
+</body>
+</html>
