@@ -143,7 +143,7 @@ ul.plain, ol.plain {
 .hero-photo {
   flex: 0 0 auto;
   width: 165px;
-  height: 220x;
+  height: 220px;
   border-radius: 6px;
   background: var(--bg-alt);
   border: 1px solid var(--rule);

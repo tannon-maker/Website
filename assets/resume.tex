@@ -1,0 +1,91 @@
+\documentclass[10.5pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{fontspec}
+\setmainfont{Georgia}[
+  UprightFont = *,
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic
+]
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[colorlinks=true, linkcolor=black, urlcolor=black]{hyperref}
+\usepackage[skip=0pt]{parskip}
+
+\definecolor{rule}{HTML}{444444}
+
+\pagestyle{empty}
+
+% Plain, ATS-safe section headings: bold small caps, black, thin rule underneath.
+\titleformat{\section}{\normalsize\bfseries\scshape}{}{0em}{}[{\color{rule}\titlerule[0.5pt]}]
+\titlespacing*{\section}{0pt}{9pt}{4pt}
+
+\newcommand{\jobheader}[2]{%
+  \noindent\textbf{#1} \hfill #2\par
+}
+
+\setlist[itemize]{leftmargin=1.3em, itemsep=1pt, topsep=2pt, parsep=0pt}
+\setlength{\parskip}{3pt}
+
+\begin{document}
+
+\begin{center}
+  {\fontsize{22}{24}\selectfont\bfseries TANNON WARNICK}\\[3pt]
+  {\small Riverton, Utah 84065 ~$\vert$~ tannon.warnick@gmail.com ~$\vert$~ (385) 529-7400}
+\end{center}
+\vspace{4pt}
+
+\section*{Education}
+\jobheader{University of Utah -- Salt Lake City, UT}{}
+\begin{itemize}
+  \item Honors Bachelor of Science in Mathematics, Expected December 2026
+  \item GPA: 3.819
+  \item Honors Thesis: \textit{Elliptic and Algebraic Curves}, advised by Prof. Gordan Savin
+\end{itemize}
+
+\section*{Honors and Awards}
+\begin{itemize}
+  \item Pi Mu Epsilon Mathematics Honors Society, Inducted Spring 2025
+  \item Dean's List, Every Semester, Fall 2023 -- Present
+  \item Leap Scholar, Inducted Spring 2025
+\end{itemize}
+
+\section*{Research Experience}
+\jobheader{Honors Thesis Student, University of Utah Department of Mathematics}{Fall 2024 -- Spring 2026}
+\begin{itemize}
+  \item Conducted an independent literature review and original synthesis of elliptic curve theory under Prof. Gordan Savin, using LaTeX to typeset all formal proofs and exposition.
+\end{itemize}
+\jobheader{Undergraduate Researcher, University of Utah Department of Mathematics}{Fall 2025}
+\begin{itemize}
+  \item Studied Category Theory, including categories, functors, adjoints, and natural transformations, in an undergraduate research course.
+\end{itemize}
+
+\section*{Professional Experience}
+\jobheader{Systems Specialist, Harris}{July 2026 -- Present}
+\begin{itemize}
+  \item Perform sequence testing, point-to-point verification, and system adjustments to commission and troubleshoot commercial building automation systems.
+  \item Program and modify PLC-based control logic for HVAC systems using Tridium and Niagara, supporting installations in K-12 schools and industrial waste treatment facilities.
+  \item Develop system graphics, drawings, and documentation, and communicate technical findings to customers and project teams.
+\end{itemize}
+\jobheader{Installer/Specialist, Harris}{May 2023 -- July 2026}
+\begin{itemize}
+  \item Planned, installed, and tested electrical wiring and control components for engineered building control and security systems, verifying circuits with ohmmeters, voltmeters, and related testing equipment.
+  \item Reviewed project plans, specifications, and sequences of operation with the project manager; prepared as-built documentation and job reports.
+  \item Maintained compliance with company installation standards, safety protocols, and local building codes on job sites.
+\end{itemize}
+
+\section*{Teaching Experience}
+\jobheader{Mentor, Harris}{May 2023 -- Present}
+\begin{itemize}
+  \item Mentor and train incoming Controls Installation Specialists on system programming, installation practices, and safety standards.
+\end{itemize}
+\jobheader{Tutor (Sensei), Code Ninjas}{December 2020 -- May 2021}
+\begin{itemize}
+  \item Tutored youth in foundational coding languages, including JavaScript, Lua, and C\#.
+\end{itemize}
+
+\section*{Skills}
+Tridium \& Niagara building automation platforms $\vert$ PLC programming $\vert$ HVAC controls troubleshooting $\vert$ Python $\vert$ LaTeX
+
+\end{document}
